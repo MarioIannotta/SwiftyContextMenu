@@ -1,0 +1,5 @@
+use_frameworks!
+
+target 'ContextMenu_Example' do
+  pod 'SwiftyContextMenu', :path => '../'
+end

@@ -1,0 +1,16 @@
+PODS:
+  - SwiftyContextMenu (0.1.0)
+
+DEPENDENCIES:
+  - SwiftyContextMenu (from `../`)
+
+EXTERNAL SOURCES:
+  SwiftyContextMenu:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SwiftyContextMenu: f3f6995de788e3df2a1e9f46f6ed9db5de2fc04c
+
+PODFILE CHECKSUM: b66ace558843c2a82ff671aa5dfc00da57c4f35d
+
+COCOAPODS: 1.9.1

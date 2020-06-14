@@ -1,0 +1,6 @@
+framework module SwiftyContextMenu {
+  umbrella header "SwiftyContextMenu-umbrella.h"
+
+  export *
+  module * { export * }
+}
