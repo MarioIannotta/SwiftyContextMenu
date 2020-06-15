@@ -5,7 +5,7 @@ UIContextMenu backporting with Swifter API
 [![License](https://img.shields.io/cocoapods/l/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 
-<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/master/demo.gif" height="500"/>
+<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/demo.gif" height="500"/>
 
 ## Example
 
