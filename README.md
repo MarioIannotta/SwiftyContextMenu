@@ -1,11 +1,10 @@
-# SwiftyContextMenu
-UIContextMenu backporting with Swifter API
+<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/Resources/logo.png" alt="SwiftyContextMenu: UIContextMenu backporting with Swifter API"/>
 
 [![Version](https://img.shields.io/cocoapods/v/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 [![License](https://img.shields.io/cocoapods/l/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 
-<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/demo.gif" height="500"/>
+<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/Resources/demo.gif" height="500"/>
 
 ## Example
 
