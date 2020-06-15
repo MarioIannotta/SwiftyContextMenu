@@ -9,7 +9,7 @@ import UIKit
 
 class ContextMenuActionTableViewCell: UITableViewCell {
 
-    var rightImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+    private var rightImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
