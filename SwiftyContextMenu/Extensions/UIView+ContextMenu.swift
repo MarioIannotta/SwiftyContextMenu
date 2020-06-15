@@ -52,25 +52,68 @@ extension UIView {
     }
 }
 
-extension ContextMenuAnimation {
+extension ContextMenu {
+
+    private var sourceViewTranslationSize: CGSize {
+        guard
+            let targetFrame = sourceViewInfo?.targetFrame,
+            let originalFrame = sourceViewInfo?.originalFrame
+            else {
+                return .zero
+            }
+        let translationX = targetFrame.midX - originalFrame.midX
+        let translationY = targetFrame.midY - originalFrame.midY
+        return CGSize(width: translationX, height: translationY)
+    }
+
+    private var sourceViewTranslationTrasform: CGAffineTransform {
+        return CGAffineTransform(translationX: sourceViewTranslationSize.width,
+                                 y: sourceViewTranslationSize.height)
+    }
 
     var sourceViewFirstStepTransform: CGAffineTransform {
-        CGAffineTransform(scaleX: sourceViewBounceRange.lowerBound, y: sourceViewBounceRange.lowerBound)
+        CGAffineTransform(scaleX:  animation.sourceViewBounceRange.lowerBound,
+                          y: animation.sourceViewBounceRange.lowerBound)
+            .concatenating(sourceViewTranslationTrasform)
     }
 
     var sourceViewSecondTransform: CGAffineTransform {
-        let scale = sourceViewBounceRange.lowerBound + (sourceViewBounceRange.upperBound - sourceViewBounceRange.lowerBound)/2
+        let middlePoint = (animation.sourceViewBounceRange.upperBound - animation.sourceViewBounceRange.lowerBound) / 2
+        let scale = animation.sourceViewBounceRange.lowerBound + middlePoint
         return CGAffineTransform(scaleX: scale, y: scale)
+            .concatenating(sourceViewTranslationTrasform)
     }
-    var sourceViewThirdTransform: CGAffineTransform {
-        CGAffineTransform(scaleX: sourceViewBounceRange.upperBound, y: sourceViewBounceRange.upperBound)
+    func sourceViewThirdTransform(isContextMenuUp: Bool, isContextMenuRight: Bool) -> CGAffineTransform {
+        guard
+            let targetFrame = sourceViewInfo?.targetFrame
+            else {
+                return sourceViewTranslationTrasform
+            }
+        let scaleTransform = CGAffineTransform(scaleX: animation.sourceViewBounceRange.upperBound,
+                                               y: animation.sourceViewBounceRange.upperBound)
+        let finalSnapshotSize = targetFrame.applying(scaleTransform)
+        var translationX = (targetFrame.size.width - finalSnapshotSize.size.width) / 2
+        var translationY = (targetFrame.size.height - finalSnapshotSize.size.height) / 2
+        if !isContextMenuUp { translationY *= -1 }
+        if !isContextMenuRight { translationX *= -1 }
+        return scaleTransform.translatedBy(x: sourceViewTranslationSize.width + translationX,
+                                           y: sourceViewTranslationSize.height + translationY)
+
     }
 
     var optionsViewFirstTransform: CGAffineTransform {
-        CGAffineTransform(scaleX: optionsViewBounceRange.lowerBound, y: optionsViewBounceRange.lowerBound)
+        CGAffineTransform(scaleX: animation.optionsViewBounceRange.lowerBound,
+                          y: animation.optionsViewBounceRange.lowerBound)
+            .concatenating(sourceViewTranslationTrasform)
+    }
+    
+    var optionsViewSecondTransform: CGAffineTransform {
+        CGAffineTransform(scaleX: animation.optionsViewBounceRange.upperBound,
+                          y: animation.optionsViewBounceRange.upperBound)
+            .concatenating(sourceViewTranslationTrasform)
     }
 
-    var optionsViewSecondTransform: CGAffineTransform {
-        CGAffineTransform(scaleX: optionsViewBounceRange.upperBound, y: optionsViewBounceRange.upperBound)
+    var optionsViewThirdTransform: CGAffineTransform {
+        sourceViewTranslationTrasform
     }
 }

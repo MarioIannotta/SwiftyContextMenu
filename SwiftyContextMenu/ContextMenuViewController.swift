@@ -25,8 +25,8 @@ class ContextMenuViewController: UIViewController {
 
     private let cellIdentifier = "ContextMenuCell"
 
-    private var isContextMenuUp: Bool { (contextMenu.sourceViewInfo?.frame.midY ?? 0) > UIScreen.main.bounds.height / 2 }
-    private var isContextMenuRight: Bool { (contextMenu.sourceViewInfo?.frame.midX ?? 0) > UIScreen.main.bounds.width / 2 }
+    private var isContextMenuUp: Bool { (contextMenu.sourceViewInfo?.targetFrame.midY ?? 0) > UIScreen.main.bounds.height / 2 }
+    private var isContextMenuRight: Bool { (contextMenu.sourceViewInfo?.targetFrame.midX ?? 0) > UIScreen.main.bounds.width / 2 }
 
     init(contextMenu: ContextMenu, delegate: ContextMenuViewControllerDelegate?) {
         super.init(nibName: nil, bundle: nil)
@@ -75,8 +75,9 @@ class ContextMenuViewController: UIViewController {
 
     private func addSnapshotView() {
         snapshotImageView.image = contextMenu.sourceViewInfo?.snapshot
-        snapshotImageView.frame = contextMenu.sourceViewInfo?.frame ?? .zero
-        snapshotImageView.clipsToBounds = false
+        snapshotImageView.frame = contextMenu.sourceViewInfo?.originalFrame ?? .zero
+        snapshotImageView.clipsToBounds = true
+        snapshotImageView.layer.cornerRadius = contextMenu.layout.sourceViewCornerRadius
         view.addSubview(snapshotImageView)
     }
 
@@ -159,7 +160,7 @@ class ContextMenuViewController: UIViewController {
     }
 
     private func fadeIn() {
-        contextMenuView.transform = contextMenu.animation.optionsViewFirstTransform
+        contextMenuView.transform = contextMenu.optionsViewFirstTransform
         showSourceView {
             self.showContextMenu()
         }
@@ -169,40 +170,36 @@ class ContextMenuViewController: UIViewController {
         UIView.animate(
             withDuration: 0.2,
             animations: {
-                self.snapshotImageView.transform = self.contextMenu.animation.sourceViewFirstStepTransform
+                self.overlayView.alpha = 1
+                self.blurView.alpha = 1
+                self.snapshotImageView.transform = self.contextMenu.sourceViewFirstStepTransform
             },
             completion: { _ in
                 UIView.animate(
                     withDuration: 0.2,
                     animations: {
-                        self.snapshotImageView.transform = self.contextMenu.animation.sourceViewSecondTransform
+                        self.snapshotImageView.transform = self.contextMenu.sourceViewSecondTransform
                     },
                     completion: { _ in completion() })
                 })
     }
 
     private func showContextMenu() {
-        let finalSnapshotSize = self.snapshotImageView.frame.applying(self.contextMenu.animation.sourceViewThirdTransform)
-        var translationX = (self.snapshotImageView.frame.size.width - finalSnapshotSize.size.width) / 2
-        var translationY = (self.snapshotImageView.frame.size.height - finalSnapshotSize.size.height) / 2
-        if !isContextMenuUp { translationY *= -1 }
-        if !isContextMenuRight { translationX *= -1 }
-        let translationTransform = CGAffineTransform(translationX: translationX, y: translationY)
-        let finalSnapshotTransform = self.contextMenu.animation.sourceViewThirdTransform.concatenating(translationTransform)
         UIView.animate(
             withDuration: 0.2,
             animations: {
                 self.contextMenuView.alpha = 1
-                self.overlayView.alpha = 1
-                self.blurView.alpha = 1
-                self.snapshotImageView.transform = finalSnapshotTransform
-                self.contextMenuView.transform = self.contextMenu.animation.optionsViewSecondTransform
+                self.contextMenuView.transform = self.contextMenu.optionsViewSecondTransform
+
+                let trasform = self.contextMenu.sourceViewThirdTransform(isContextMenuUp: self.isContextMenuUp,
+                                                                         isContextMenuRight: self.isContextMenuRight)
+                self.snapshotImageView.transform = trasform
             },
             completion: { _ in
                 UIView.animate(
                     withDuration: 0.2,
                     animations: {
-                        self.contextMenuView.transform = .identity
+                        self.contextMenuView.transform = self.contextMenu.optionsViewThirdTransform
                 })
             })
     }
@@ -210,15 +207,13 @@ class ContextMenuViewController: UIViewController {
     private func fadeOutAndClose() {
         UIView.animate(
             withDuration: 0.2,
-            animations: { [weak self] in
-                self?.blurView.alpha = 0
-                self?.contextMenuView.alpha = 0
-                self?.snapshotImageView.transform = .identity
+            animations: {
+                self.blurView.alpha = 0
+                self.contextMenuView.alpha = 0
+                self.snapshotImageView.transform = .identity
+                self.contextMenuView.transform = self.contextMenu.optionsViewFirstTransform
             },
-            completion: { [weak self] _ in
-                guard
-                    let self = self
-                    else { return }
+            completion: { _ in
                 self.delegate?.contextMenuViewControllerDidDismiss(self)
             })
     }

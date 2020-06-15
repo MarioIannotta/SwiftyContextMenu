@@ -16,7 +16,7 @@ public struct ContextMenu {
 
     var sourceViewInfo: ContextMenuSourceViewInfo?
 
-    public init(title: String,
+    public init(title: String?,
                 actions: [ContextMenuAction],
                 layout: ContextMenuLayout = ContextMenuLayout(),
                 animation: ContextMenuAnimation = ContextMenuAnimation()) {
@@ -64,18 +64,24 @@ public struct ContextMenuLayout {
     let width: CGFloat
     let spacing: CGFloat
     let padding: CGFloat
+    let sourceViewCornerRadius: CGFloat
 
-    public init(width: CGFloat = 250, spacing: CGFloat = 20, padding: CGFloat = 40) {
+    public init(width: CGFloat = 250,
+                spacing: CGFloat = 20,
+                padding: CGFloat = 30,
+                sourceViewCornerRadius: CGFloat = 0) {
         self.width = width
         self.spacing = spacing
         self.padding = padding
+        self.sourceViewCornerRadius = sourceViewCornerRadius
     }
 }
 
 struct ContextMenuSourceViewInfo {
     let alpha: CGFloat
     let snapshot: UIImage?
-    let frame: CGRect
+    let originalFrame: CGRect
+    let targetFrame: CGRect
 }
 
 public protocol ContextMenuSourceView: UIView { }
@@ -92,25 +98,52 @@ extension UIView: ContextMenuSourceView {
         guard
             let contextMenu = contextMenu
             else { return }
+        alpha = 0
         contextMenuWindow = ContextMenuWindow(
             contextMenu: contextMenu,
             onDismiss: { [weak self] in
-                self?.closeContextMenu()
+                self?.contextMenuWindow = nil
+                self?.alpha = 1
             })
         contextMenuWindow?.makeKeyAndVisible()
-        alpha = 0
     }
 
     public func dismissContextMenu(completion: (() -> Void)?) {
         contextMenuWindow?.resignKey()
     }
 
-    private func closeContextMenu() {
-        alpha = 1
-        contextMenuWindow = nil
-    }
-
     func snapshotSourceView() {
-        contextMenu?.sourceViewInfo = ContextMenuSourceViewInfo(alpha: alpha, snapshot: snapshot(), frame: absoluteFrame)
+        let padding = contextMenu?.layout.padding ?? 0
+        let originalFrame = absoluteFrame
+        let originalFrameWithPadding = CGRect(x: originalFrame.origin.x - padding,
+                                              y: originalFrame.origin.y - padding,
+                                              width: originalFrame.width + padding * 2,
+                                              height: originalFrame.height + padding * 2)
+        let targetFrame: CGRect
+        if UIScreen.main.bounds.contains(originalFrameWithPadding) {
+            targetFrame = originalFrame
+        } else {
+            let x: CGFloat
+            let y: CGFloat
+            if originalFrame.minX < padding {
+                x = padding ?? 0
+            } else if originalFrame.maxX > UIScreen.main.bounds.width - padding {
+                x = UIScreen.main.bounds.width - originalFrame.width - padding
+            } else {
+                x = originalFrame.origin.x
+            }
+            if originalFrame.minY < padding {
+                y = padding ?? 0
+            } else if originalFrame.maxY > UIScreen.main.bounds.height - padding {
+                y = UIScreen.main.bounds.height - originalFrame.height - padding
+            } else {
+                y = originalFrame.origin.y
+            }
+            targetFrame = CGRect(origin: CGPoint(x: x, y: y), size: originalFrame.size)
+        }
+        contextMenu?.sourceViewInfo = ContextMenuSourceViewInfo(alpha: alpha,
+                                                                snapshot: snapshot(),
+                                                                originalFrame: originalFrame,
+                                                                targetFrame: targetFrame)
     }
 }
