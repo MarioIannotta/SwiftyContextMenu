@@ -90,7 +90,14 @@ extension UIView: ContextMenuSourceView {
 
     public func addContextMenu(_ contextMenu: ContextMenu, for events: ContextMenuEvent...) {
         self.contextMenu = contextMenu
+        self.contextMenuGestureRecognizers = []
         events.forEach(addGestureRecognizer)
+    }
+
+    public func removeContextMenu() {
+        contextMenu = nil
+        contextMenuGestureRecognizers?.forEach(removeGestureRecognizer)
+        contextMenuGestureRecognizers = []
     }
 
     public func showContextMenu(completion: (() -> Void)?) {

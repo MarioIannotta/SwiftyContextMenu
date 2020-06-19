@@ -10,6 +10,7 @@ import UIKit
 private struct ContextMenuAssociatedObjectKey {
     static var contextMenu = "ContextMenu.ContextMenu"
     static var contextMenuWindow = "ContextMenu.ContextMenuWindow"
+    static var contextMenuGestureRecognizers = "ContextMenu.GestureRecognizers"
 }
 
 extension UIView {
@@ -24,16 +25,23 @@ extension UIView {
         set { objc_setAssociatedObject(self, &ContextMenuAssociatedObjectKey.contextMenuWindow, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
+    var contextMenuGestureRecognizers: [UIGestureRecognizer]? {
+        get { objc_getAssociatedObject(self, &ContextMenuAssociatedObjectKey.contextMenuGestureRecognizers) as? [UIGestureRecognizer] }
+        set { objc_setAssociatedObject(self, &ContextMenuAssociatedObjectKey.contextMenuGestureRecognizers, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
     func addGestureRecognizer(event: ContextMenuEvent) {
         switch event {
         case .longPress(let duration):
             let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGestureRecognizer(_:)))
             longPressGestureRecognizer.minimumPressDuration = duration
             addGestureRecognizer(longPressGestureRecognizer)
+            contextMenuGestureRecognizers?.append(longPressGestureRecognizer)
         case .tap(let numberOfTaps):
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGestureRecognizer(_:)))
             tapGestureRecognizer.numberOfTapsRequired = numberOfTaps
             addGestureRecognizer(tapGestureRecognizer)
+            contextMenuGestureRecognizers?.append(tapGestureRecognizer)
         }
     }
 
