@@ -21,7 +21,7 @@ extension UIViewController {
         if #available(iOS 11.0, *) {
             return view.safeAreaLayoutGuide.bottomAnchor
         } else {
-            return topLayoutGuide.bottomAnchor
+            return bottomLayoutGuide.topAnchor
         }
     }
 }
