@@ -40,7 +40,8 @@ class ViewController: UIViewController {
         let actions = [favoriteAction, shareAction, deleteAction]
         let contextMenu = ContextMenu(
             title: "Actions",
-            actions: actions)
+            actions: actions,
+            delegate: self)
         contextMenuButtons
             .forEach {
                 $0.addContextMenu(contextMenu, for: .tap(numberOfTaps: 1), .longPress(duration: 0.3))
@@ -63,4 +64,15 @@ extension ViewController: UIContextMenuInteractionDelegate {
                                           previewProvider: nil) { _ in UIMenu(title: "Actions", children: actions) }
     }
 
+}
+
+extension ViewController: ContextMenuDelegate {
+
+    func contextMenuWillAppear(_ contextMenu: ContextMenu) {
+        print("context menu will appear")
+    }
+    
+    func contextMenuDidAppear(_ contextMenu: ContextMenu) {
+        print("context menu did appear")
+    }
 }

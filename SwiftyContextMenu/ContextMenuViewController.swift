@@ -160,8 +160,10 @@ class ContextMenuViewController: UIViewController {
     }
 
     private func fadeIn() {
+        contextMenu.delegate?.contextMenuWillAppear(contextMenu)
         contextMenuView.transform = contextMenu.optionsViewFirstTransform
         showSourceView {
+            self.contextMenu.delegate?.contextMenuDidAppear(self.contextMenu)
             self.showContextMenu()
         }
     }

@@ -13,17 +13,20 @@ public struct ContextMenu {
     let actions: [ContextMenuAction]
     let layout: ContextMenuLayout
     let animation: ContextMenuAnimation
+    weak var delegate: ContextMenuDelegate?
 
     var sourceViewInfo: ContextMenuSourceViewInfo?
 
     public init(title: String?,
                 actions: [ContextMenuAction],
                 layout: ContextMenuLayout = ContextMenuLayout(),
-                animation: ContextMenuAnimation = ContextMenuAnimation()) {
+                animation: ContextMenuAnimation = ContextMenuAnimation(),
+                delegate: ContextMenuDelegate? = nil) {
         self.title = title
         self.actions = actions
         self.layout = layout
         self.animation = animation
+        self.delegate = delegate
     }
 }
 
@@ -133,14 +136,14 @@ extension UIView: ContextMenuSourceView {
             let x: CGFloat
             let y: CGFloat
             if originalFrame.minX < padding {
-                x = padding ?? 0
+                x = padding
             } else if originalFrame.maxX > UIScreen.main.bounds.width - padding {
                 x = UIScreen.main.bounds.width - originalFrame.width - padding
             } else {
                 x = originalFrame.origin.x
             }
             if originalFrame.minY < padding {
-                y = padding ?? 0
+                y = padding 
             } else if originalFrame.maxY > UIScreen.main.bounds.height - padding {
                 y = UIScreen.main.bounds.height - originalFrame.height - padding
             } else {

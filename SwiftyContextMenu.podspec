@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SwiftyContextMenu'
-  s.version          = '0.1.2'
+  s.version          = '0.1.3'
   s.summary          = 'UIContextMenu backporting with Swifter API.'
   s.description      = <<-DESC
   SwiftyContextMenu is a backporting of UIContextMenu available on iOS 10+ that is easier to integrate.
