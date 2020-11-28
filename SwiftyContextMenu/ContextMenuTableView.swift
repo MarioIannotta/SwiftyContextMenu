@@ -12,6 +12,7 @@ class ContextMenuTableView: UITableView {
     init() {
         super.init(frame: .zero, style: .plain)
         separatorInset = .zero
+        separatorStyle = .none
         backgroundColor = .clear
     }
 

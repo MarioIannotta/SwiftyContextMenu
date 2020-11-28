@@ -63,18 +63,10 @@ extension UIView {
 extension ContextMenu {
 
     private var sourceViewTranslationSize: CGSize {
-        guard
-            let targetFrame = sourceViewInfo?.targetFrame,
-            let originalFrame = sourceViewInfo?.originalFrame
-            else {
-                return .zero
-            }
-        let translationX = targetFrame.midX - originalFrame.midX
-        let translationY = targetFrame.midY - originalFrame.midY
-        return CGSize(width: translationX, height: translationY)
+        .zero
     }
 
-    private var sourceViewTranslationTrasform: CGAffineTransform {
+    private var sourceViewTranslationTransform: CGAffineTransform {
         return CGAffineTransform(translationX: sourceViewTranslationSize.width,
                                  y: sourceViewTranslationSize.height)
     }
@@ -82,20 +74,21 @@ extension ContextMenu {
     var sourceViewFirstStepTransform: CGAffineTransform {
         CGAffineTransform(scaleX:  animation.sourceViewBounceRange.lowerBound,
                           y: animation.sourceViewBounceRange.lowerBound)
-            .concatenating(sourceViewTranslationTrasform)
+            .concatenating(sourceViewTranslationTransform)
     }
 
     var sourceViewSecondTransform: CGAffineTransform {
         let middlePoint = (animation.sourceViewBounceRange.upperBound - animation.sourceViewBounceRange.lowerBound) / 2
         let scale = animation.sourceViewBounceRange.lowerBound + middlePoint
         return CGAffineTransform(scaleX: scale, y: scale)
-            .concatenating(sourceViewTranslationTrasform)
+            .concatenating(sourceViewTranslationTransform)
     }
+    
     func sourceViewThirdTransform(isContextMenuUp: Bool, isContextMenuRight: Bool) -> CGAffineTransform {
         guard
             let targetFrame = sourceViewInfo?.targetFrame
             else {
-                return sourceViewTranslationTrasform
+                return sourceViewTranslationTransform
             }
         let scaleTransform = CGAffineTransform(scaleX: animation.sourceViewBounceRange.upperBound,
                                                y: animation.sourceViewBounceRange.upperBound)
@@ -109,19 +102,29 @@ extension ContextMenu {
 
     }
 
-    var optionsViewFirstTransform: CGAffineTransform {
-        CGAffineTransform(scaleX: animation.optionsViewBounceRange.lowerBound,
-                          y: animation.optionsViewBounceRange.lowerBound)
-            .concatenating(sourceViewTranslationTrasform)
+    func optionsViewFirstTransform(isContextMenuUp: Bool) -> CGAffineTransform {
+        sourceViewTranslationTransform
+            .concatenating(
+                CGAffineTransform(
+                    scaleX: animation.optionsViewBounceRange.lowerBound,
+                    y: animation.optionsViewBounceRange.lowerBound
+                )
+            )
+            .concatenating(
+                CGAffineTransform(
+                    translationX: 0,
+                    y: (!isContextMenuUp ? -1 : 1) * 120
+                )
+            )
     }
     
     var optionsViewSecondTransform: CGAffineTransform {
         CGAffineTransform(scaleX: animation.optionsViewBounceRange.upperBound,
                           y: animation.optionsViewBounceRange.upperBound)
-            .concatenating(sourceViewTranslationTrasform)
+            .concatenating(sourceViewTranslationTransform)
     }
 
     var optionsViewThirdTransform: CGAffineTransform {
-        sourceViewTranslationTrasform
+        sourceViewTranslationTransform
     }
 }

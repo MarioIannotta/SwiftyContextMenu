@@ -30,4 +30,12 @@ extension UIView {
             subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top),
             bottomAnchor.constraint(equalTo: subview.bottomAnchor, constant: insets.bottom)])
     }
+    
+    var isDarkMode: Bool {
+        if #available(iOS 13.0, *) {
+            return traitCollection.userInterfaceStyle == .dark
+        } else {
+            return false
+        }
+    }
 }
