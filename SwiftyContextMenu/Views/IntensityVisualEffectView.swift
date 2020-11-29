@@ -2,14 +2,13 @@ class IntensityVisualEffectView: UIVisualEffectView {
 
     private var animator: UIViewPropertyAnimator!
     private let intensity: CGFloat
-    private let visualEffect: UIVisualEffect
+    private let _effect: UIVisualEffect
     
     init(effect: UIVisualEffect, intensity: CGFloat) {
         self.intensity = intensity
-        self.visualEffect = effect
+        self._effect = effect
         super.init(effect: nil)
-        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = effect }
-        animator.fractionComplete = intensity
+        apply(intensity: intensity)
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
@@ -24,7 +23,11 @@ class IntensityVisualEffectView: UIVisualEffectView {
     
     @objc private func applicationWillEnterForeground() {
         effect = nil
-        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = visualEffect }
+        apply(intensity: intensity)
+    }
+    
+    private func apply(intensity: CGFloat) {
+        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = _effect }
         animator.fractionComplete = intensity
     }
     

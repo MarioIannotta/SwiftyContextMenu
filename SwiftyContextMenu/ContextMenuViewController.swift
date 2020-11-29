@@ -17,7 +17,7 @@ class ContextMenuViewController: UIViewController {
     private let contextMenu: ContextMenu
     private weak var delegate: ContextMenuViewControllerDelegate?
 
-    private let blurView: UIVisualEffectView
+    private let blurView: ContextMenuBackgroundBlurView
     private let overlayView = UIView(frame: .zero)
     private let snapshotImageView = UIImageView(frame: .zero)
     private let contextMenuTableView = ContextMenuTableView()
@@ -90,7 +90,7 @@ class ContextMenuViewController: UIViewController {
         let arrangedSubviews = [makeTitleView(), contextMenuTableView].compactMap { $0 }
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews, axis: .vertical)
         
-        let blurView = ContextMenuBlurView(contextMenu.style)
+        let blurView = ContextMenuContentBlurView(contextMenu.style)
         blurView.layer.cornerRadius = 14
         blurView.clipsToBounds = true
         blurView.contentView.fill(with: stackView)

@@ -63,7 +63,19 @@ extension UIView {
 extension ContextMenu {
 
     private var sourceViewTranslationSize: CGSize {
-        .zero
+        guard
+            let targetFrame = sourceViewInfo?.targetFrame,
+            let originalFrame = sourceViewInfo?.originalFrame,
+            (originalFrame.origin.x < 0
+                || originalFrame.origin.y < 0
+                || originalFrame.maxX > UIScreen.main.bounds.width
+                || originalFrame.maxY > UIScreen.main.bounds.height)
+            else {
+                return .zero
+            }
+        let translationX = targetFrame.midX - originalFrame.midX
+        let translationY = targetFrame.midY - originalFrame.midY
+        return CGSize(width: translationX, height: translationY)
     }
 
     private var sourceViewTranslationTransform: CGAffineTransform {

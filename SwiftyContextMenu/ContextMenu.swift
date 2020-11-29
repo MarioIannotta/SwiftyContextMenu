@@ -18,9 +18,9 @@ public struct ContextMenu {
 
     var sourceViewInfo: ContextMenuSourceViewInfo?
 
-    public init(style: ContextMenuUserInterfaceStyle? = nil,
-                title: String?,
+    public init(title: String?,
                 actions: [ContextMenuAction],
+                style: ContextMenuUserInterfaceStyle? = nil,
                 layout: ContextMenuLayout = ContextMenuLayout(),
                 animation: ContextMenuAnimation = ContextMenuAnimation(),
                 delegate: ContextMenuDelegate? = nil) {

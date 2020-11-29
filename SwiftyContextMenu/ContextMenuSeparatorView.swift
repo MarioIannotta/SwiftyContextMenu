@@ -19,13 +19,10 @@ final class ContextMenuSeparatorView: UIStackView {
         
         let separatorView = SeparatorView(frame: frame)
         darkView = UIVisualEffectView(effect: UIVibrancyEffect(blurEffect: UIBlurEffect(style: .dark)))
-        darkView.contentView.addSubview(separatorView)
-        darkView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([darkView.heightAnchor.constraint(equalToConstant: frame.height)])
+        darkView.contentView.fill(with: separatorView)
         
         lightView = SeparatorView(frame: frame)
         lightView.tintColor = UIColor(red: 0.235, green: 0.235, blue: 0.263, alpha: 0.6)
-        NSLayoutConstraint.activate([lightView.heightAnchor.constraint(equalToConstant: frame.height)])
         
         super.init(frame: frame)
         backgroundColor = .clear
