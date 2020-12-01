@@ -5,7 +5,7 @@
 //  Created by Paul Bancarel on 28/11/2020.
 //
 
-final class ContextMenuSeparatorView: UIStackView {
+class ContextMenuSeparatorView: UIStackView {
     var style: ContextMenuUserInterfaceStyle {
         didSet {
             updateLightDarkVisibility()

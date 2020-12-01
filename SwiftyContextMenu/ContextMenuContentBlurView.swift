@@ -5,7 +5,7 @@
 //  Created by Paul Bancarel on 29/11/2020.
 //
 
-final class ContextMenuContentBlurView: ContextMenuBlurView {
+class ContextMenuContentBlurView: ContextMenuBlurView {
     
     override class var intensity: CGFloat { 1.0 }
     

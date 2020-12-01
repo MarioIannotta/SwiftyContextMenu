@@ -5,7 +5,7 @@
 //  Created by Paul Bancarel on 28/11/2020.
 //
 
-final class ContextMenuTitleLabel: UILabel {
+class ContextMenuTitleLabel: UILabel {
     
     private let style: ContextMenuUserInterfaceStyle
     private let darkTextColor = UIColor(red: 0.922, green: 0.922, blue: 0.961, alpha: 0.6)
