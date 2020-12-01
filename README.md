@@ -4,9 +4,9 @@
 [![License](https://img.shields.io/cocoapods/l/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 
-<img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/Resources/demo.gif" height="500"/>
-<img src="Resources/demo_dark.gif" height="500"/>
-<img src="Resources/demo_userStyleDidChange.gif" height="500"/>
+| Light mode | Dark mode | Runtime change |
+| --- | --- | --- |
+| <img src="Resources/demo.gif" width="200"/> | <img src="Resources/demo_dark.gif" width="200"/> | <img src="Resources/demo_userStyleDidChange.gif" width="200"/>  |
 
 ## Example
 
