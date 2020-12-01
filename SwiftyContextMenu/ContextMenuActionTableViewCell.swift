@@ -32,6 +32,7 @@ class ContextMenuActionTableViewCell: UITableViewCell {
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
+        textLabel?.numberOfLines = 0
         rightImageView.contentMode = .scaleAspectFit
         accessoryView = rightImageView
         addSeparatorView()
@@ -48,7 +49,6 @@ class ContextMenuActionTableViewCell: UITableViewCell {
     
     func configure(action: ContextMenuAction, with style: ContextMenuUserInterfaceStyle) {
         textLabel?.text = action.title
-        textLabel?.numberOfLines = 0
         rightImageView.image = action.image?.withRenderingMode(.alwaysTemplate)
         
         self.style = style
@@ -68,14 +68,17 @@ class ContextMenuActionTableViewCell: UITableViewCell {
     private func addSeparatorView() {
         let separatorView = ContextMenuSeparatorView(frame: .zero, style: self.style)
         self.separatorView = separatorView
-        addSubview(separatorView)
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            separatorView.heightAnchor.constraint(equalToConstant: 0.33),
-            separatorView.topAnchor.constraint(equalTo: topAnchor),
-            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            separatorView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+        contentView.addSubview(separatorView)
+        DispatchQueue.main.async {
+            NSLayoutConstraint.activate([
+                separatorView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+                separatorView.heightAnchor.constraint(equalToConstant: 0.33),
+                separatorView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                separatorView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            ])
+            
+        }
     }
     
     private func updateSelectedBackgroundView() {

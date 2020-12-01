@@ -7,7 +7,7 @@
 
 class ContextMenuBlurView: IntensityVisualEffectView {
     
-    internal class var intensity: CGFloat { 1.0 }
+    class var intensity: CGFloat { 1.0 }
     internal let style: ContextMenuUserInterfaceStyle
     
     init(_ style: ContextMenuUserInterfaceStyle) {

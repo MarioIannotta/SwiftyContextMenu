@@ -12,12 +12,7 @@ final class ContextMenuBackgroundBlurView: ContextMenuBlurView {
     override class func blurEffect(_ style: ContextMenuUserInterfaceStyle) -> UIVisualEffect {
         switch style {
         case .automatic:
-            if #available(iOS 13.0, *) {
-                return UIBlurEffect(style: .light)
-            } else {
-                print("Cannot have an automatic blur effect below iOS 13.")
-                return UIBlurEffect(style: .light)
-            }
+            return UIBlurEffect(style: .light)
         case .light:
             if #available(iOS 13.0, *) {
                 return UIBlurEffect(style: .light)

@@ -85,6 +85,8 @@ class ContextMenuViewController: UIViewController {
     private func addContextMenuTableView() {
         contextMenuTableView.delegate = self
         contextMenuTableView.dataSource = self
+        contextMenuTableView.rowHeight = UITableView.automaticDimension
+        contextMenuTableView.estimatedRowHeight = 44
         contextMenuTableView.register(ContextMenuActionTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         
         let arrangedSubviews = [makeTitleView(), contextMenuTableView].compactMap { $0 }
