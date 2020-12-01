@@ -89,3 +89,7 @@ fastlane/test_output
 
 iOSInjectionProject/
 .DS_Store
+
+Example/Pods/
+
+Example/Podfile.lock

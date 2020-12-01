@@ -9,6 +9,7 @@
 import UIKit
 
 public struct ContextMenu {
+    let style: ContextMenuUserInterfaceStyle
     let title: String?
     let actions: [ContextMenuAction]
     let layout: ContextMenuLayout
@@ -19,9 +20,16 @@ public struct ContextMenu {
 
     public init(title: String?,
                 actions: [ContextMenuAction],
+                style: ContextMenuUserInterfaceStyle? = nil,
                 layout: ContextMenuLayout = ContextMenuLayout(),
                 animation: ContextMenuAnimation = ContextMenuAnimation(),
                 delegate: ContextMenuDelegate? = nil) {
+        
+        if #available(iOS 13, *) {
+            self.style = style ?? .automatic
+        } else {
+            self.style = style ?? .light
+        }
         self.title = title
         self.actions = actions
         self.layout = layout
@@ -34,15 +42,18 @@ public struct ContextMenuAction {
     let title: String
     let image: UIImage?
     let tintColor: UIColor
+    let tintColorDark: UIColor
     let action: ((ContextMenuAction) -> Void)?
 
     public init(title: String,
                 image: UIImage? = nil,
-                tintColor: UIColor = .black,
+                tintColor: UIColor? = nil,
+                tintColorDark: UIColor? = nil,
                 action: ((ContextMenuAction) -> Void)?) {
         self.title = title
         self.image = image
-        self.tintColor = tintColor
+        self.tintColor = tintColor ?? .defaultLabelMenuActionColor
+        self.tintColorDark = tintColorDark ?? .defaultLabelMenuActionColor
         self.action = action
     }
 }
@@ -52,12 +63,17 @@ public enum ContextMenuEvent {
     case tap(numberOfTaps: Int)
 }
 
+public enum ContextMenuUserInterfaceStyle {
+    @available(iOS 13, *) case automatic
+    case light, dark
+}
+
 public struct ContextMenuAnimation {
     let sourceViewBounceRange: ClosedRange<CGFloat>
     let optionsViewBounceRange: ClosedRange<CGFloat>
         
     public init(sourceViewBounceRange: ClosedRange<CGFloat> = 0.9...1.15,
-                optionsViewBounceRange: ClosedRange<CGFloat> = 0.9...1) {
+                optionsViewBounceRange: ClosedRange<CGFloat> = 0.05...1) {
         self.sourceViewBounceRange = sourceViewBounceRange
         self.optionsViewBounceRange = optionsViewBounceRange
     }

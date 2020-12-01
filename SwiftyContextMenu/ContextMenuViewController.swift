@@ -14,14 +14,14 @@ protocol ContextMenuViewControllerDelegate: class {
 
 class ContextMenuViewController: UIViewController {
 
-    private var contextMenu: ContextMenu!
+    private let contextMenu: ContextMenu
     private weak var delegate: ContextMenuViewControllerDelegate?
 
-    private var blurView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-    private var overlayView = UIView(frame: .zero)
-    private var snapshotImageView = UIImageView(frame: .zero)
-    private var contextMenuTableView = ContextMenuTableView()
-    private var contextMenuView = UIView()
+    private let blurView: ContextMenuBackgroundBlurView
+    private let overlayView = UIView(frame: .zero)
+    private let snapshotImageView = UIImageView(frame: .zero)
+    private let contextMenuTableView = ContextMenuTableView()
+    private let contextMenuView = UIView()
 
     private let cellIdentifier = "ContextMenuCell"
 
@@ -29,9 +29,10 @@ class ContextMenuViewController: UIViewController {
     private var isContextMenuRight: Bool { (contextMenu.sourceViewInfo?.targetFrame.midX ?? 0) > UIScreen.main.bounds.width / 2 }
 
     init(contextMenu: ContextMenu, delegate: ContextMenuViewControllerDelegate?) {
-        super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.contextMenu = contextMenu
+        self.blurView = ContextMenuBackgroundBlurView(contextMenu.style)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -84,23 +85,20 @@ class ContextMenuViewController: UIViewController {
     private func addContextMenuTableView() {
         contextMenuTableView.delegate = self
         contextMenuTableView.dataSource = self
+        contextMenuTableView.rowHeight = UITableView.automaticDimension
+        contextMenuTableView.estimatedRowHeight = 44
         contextMenuTableView.register(ContextMenuActionTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-
-        let arrangedSubviews = [makeTitleStackView(), contextMenuTableView].compactMap { $0 }
-        let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
-        stackView.axis = .vertical
-        stackView.spacing = 0
-        blurView.contentView.fill(with: stackView)
-
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+        
+        let arrangedSubviews = [makeTitleView(), contextMenuTableView].compactMap { $0 }
+        let stackView = UIStackView(arrangedSubviews: arrangedSubviews, axis: .vertical)
+        
+        let blurView = ContextMenuContentBlurView(contextMenu.style)
         blurView.layer.cornerRadius = 14
         blurView.clipsToBounds = true
         blurView.contentView.fill(with: stackView)
 
         contextMenuView.alpha = 0
         contextMenuView.layer.cornerRadius = 14
-        contextMenuView.layer.borderWidth = 1
-        contextMenuView.layer.borderColor = contextMenuTableView.separatorColor?.cgColor
         contextMenuView.layer.shadowColor = UIColor.black.cgColor
         contextMenuView.layer.shadowOffset = CGSize(width: 2, height: 5)
         contextMenuView.layer.shadowRadius = 6
@@ -136,7 +134,7 @@ class ContextMenuViewController: UIViewController {
         ])
     }
 
-    private func makeTitleStackView() -> UIStackView? {
+    private func makeTitleView() -> UIView? {
         guard
             let title = contextMenu.title
             else {
@@ -144,24 +142,17 @@ class ContextMenuViewController: UIViewController {
             }
         let titleLabelContainterView = UIView(frame: .zero)
         titleLabelContainterView.backgroundColor = .clear
-        let titleLabel = UILabel(frame: .zero)
+        let titleLabel = ContextMenuTitleLabel(frame: .zero, style: contextMenu.style)
         titleLabel.text = title
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.textColor = UIColor.gray
-        titleLabel.textAlignment = .center
+        titleLabel.sizeToFit()
         titleLabelContainterView.fill(with: titleLabel, insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
-        let separatorView = UIView(frame: .zero)
-        separatorView.backgroundColor = contextMenuTableView.separatorColor?.withAlphaComponent(0.15)
-        NSLayoutConstraint.activate([separatorView.heightAnchor.constraint(equalToConstant: 1)])
-        let stackView = UIStackView(arrangedSubviews: [titleLabelContainterView, separatorView])
-        stackView.axis = .vertical
-        return stackView
+        
+        return titleLabelContainterView
     }
 
     private func fadeIn() {
         contextMenu.delegate?.contextMenuWillAppear(contextMenu)
-        contextMenuView.transform = contextMenu.optionsViewFirstTransform
+        contextMenuView.transform = contextMenu.optionsViewFirstTransform(isContextMenuUp: isContextMenuUp)
         showSourceView {
             self.contextMenu.delegate?.contextMenuDidAppear(self.contextMenu)
             self.showContextMenu()
@@ -188,14 +179,21 @@ class ContextMenuViewController: UIViewController {
 
     private func showContextMenu() {
         UIView.animate(
-            withDuration: 0.2,
+            withDuration: 0.5,
+            delay: 0.0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 5,
+            options: .curveLinear,
             animations: {
                 self.contextMenuView.alpha = 1
                 self.contextMenuView.transform = self.contextMenu.optionsViewSecondTransform
 
-                let trasform = self.contextMenu.sourceViewThirdTransform(isContextMenuUp: self.isContextMenuUp,
-                                                                         isContextMenuRight: self.isContextMenuRight)
-                self.snapshotImageView.transform = trasform
+                let transform = self.contextMenu.sourceViewThirdTransform(
+                    isContextMenuUp: self.isContextMenuUp,
+                    isContextMenuRight: self.isContextMenuRight
+                )
+                
+                self.snapshotImageView.transform = transform
             },
             completion: { _ in
                 UIView.animate(
@@ -208,12 +206,12 @@ class ContextMenuViewController: UIViewController {
 
     private func fadeOutAndClose() {
         UIView.animate(
-            withDuration: 0.2,
+            withDuration: 0.3,
             animations: {
                 self.blurView.alpha = 0
                 self.contextMenuView.alpha = 0
                 self.snapshotImageView.transform = .identity
-                self.contextMenuView.transform = self.contextMenu.optionsViewFirstTransform
+                self.contextMenuView.transform = self.contextMenu.optionsViewFirstTransform(isContextMenuUp: self.isContextMenuUp)
             },
             completion: { _ in
                 self.delegate?.contextMenuViewControllerDidDismiss(self)
@@ -239,7 +237,7 @@ extension ContextMenuViewController: UITableViewDataSource, UITableViewDelegate 
             else {
                 return UITableViewCell()
             }
-        cell.configure(action: contextMenu.actions[indexPath.row])
+        cell.configure(action: contextMenu.actions[indexPath.row], with: contextMenu.style)
         return cell
     }
 

@@ -5,6 +5,8 @@
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyContextMenu.svg?style=flat)](https://cocoapods.org/pods/SwiftyContextMenu)
 
 <img src="https://raw.githubusercontent.com/MarioIannotta/SwiftyContextMenu/main/Resources/demo.gif" height="500"/>
+<img src="Resources/demo_dark.gif" height="500"/>
+<img src="Resources/demo_userStyleDidChange.gif" height="500"/>
 
 ## Example
 
@@ -41,6 +43,26 @@ let contextMenu = ContextMenu(title: "Actions", actions: actions)
 button.addContextMenu(contextMenu, for: .tap(numberOfTaps: 1), .longPress(duration: 0.3))
 ```
 
+### Dark mode
+By default the `ContextMenu` adapts his style automatically with the system (> iOS 13) but you can force an appearance if you want.
+
+```swift
+let favoriteAction = ContextMenuAction(
+	title: "Like",
+	image: UIImage(named: "heart.fill"),
+	tintColor: UIColor.black,
+	tintColorDark: UIColor.white,
+	action: { _ in }
+)
+                                               
+let contextMenu = ContextMenu(
+	mode: .light, //.automatic, .light or .dark
+	title: "Actions",
+	actions: actions
+)
+
+```
+If you set mode to `.automatic` please be sure to provide a `tintColor` to the `ContextMenuAction` that contains light and dark appearance. (When set to `.automatic` only `tintColor` is applied.)
 
 ## Author
 
@@ -55,6 +77,6 @@ ContextMenu is available under the MIT license. See the LICENSE file for more in
 ## TODOs:
 
 * [ ] Document all the public stuff
-* [ ] Support dark mode
+* [x] Support dark mode
 * [ ] Improve the Readme Usage section
 * [x] Support dynamic type

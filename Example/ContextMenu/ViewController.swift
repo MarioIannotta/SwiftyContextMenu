@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         (contextMenuButtons + uiContextMenuButtons).forEach {
-            $0?.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 10
         }
 
         if #available(iOS 13.0, *) {
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
                                                action: { _ in print("favorite") })
         let shareAction = ContextMenuAction(title: "Share",
                                             image: UIImage(named: "square.and.arrow.up.fill"),
-                                            action: { _ in print("square") })
+                                            action: { _ in print("share") })
         let deleteAction = ContextMenuAction(title: "Delete",
                                              image: UIImage(named: "trash.fill"),
                                              tintColor: UIColor.red,
